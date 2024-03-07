@@ -30,7 +30,7 @@ if __name__ == "__main__":
     panda = Panda()
     panda.set_safety_mode(Panda.SAFETY_ALLOUTPUT)
 
-    uds_client = UdsClient(panda, ADDR, ADDR + 8, BUS, timeout=0.1, response_pending_timeout=0.1, debug=DEBUG)
+    uds_client = UdsClient(panda, ADDR, ADDR + 8, BUS, timeout=1.0, response_pending_timeout=1.0, debug=DEBUG)
 
     print("Getting application versions...")
 
