@@ -146,11 +146,14 @@ if __name__ == "__main__":
     data += struct.pack('!I', 0x8000)
 
     # Manually send so we don't get stuck waiting for the response
-    # uds_client.routine_control(ROUTINE_CONTROL_TYPE.START, 0xff00, data)
+    print("\nManually execute start action.")
+    uds_client.routine_control(ROUTINE_CONTROL_TYPE.START, 0xff00, data)
+    print("\nErase the header.")
     erase = b"\x31\x01\xff\x00" + data
+    print("\nSend stop operation.")
     panda.isotp_send(ADDR, erase, bus=BUS)
 
-    print("\nDumping keys...")
+    print("\nDump the keys by targeting start and end addresses.")
     start = 0xfebe6e34
     end = 0xfebe6ff4
 
@@ -162,15 +165,19 @@ if __name__ == "__main__":
                 for addr, _, data, bus in panda.can_recv():
                     if data == b"\x03\x7f\x31\x78\x00\x00\x00\x00": # Skip response pending
                         continue
-
+                    print("\nChecking address...")
                     if addr != ADDR + 8:
                         continue
-
+                    print("\nChecking address complete.")
+                    print("\nUnpacking the data.")
                     ptr = struct.unpack("<I", data[:4])[0]
                     assert ptr == start
-
+                    print("\nData unpacking complete.")
+                    
                     extracted += data[4:]
+                    print("\nWrite the data.")
                     f.write(data[4:])
+                    print("\nFlush the data.")
                     f.flush()
 
                     start += 4
